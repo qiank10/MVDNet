@@ -1,9 +1,25 @@
 # MVDNet
 Robust Multimodal Vehicle Detection in Foggy Weather Using Complementary Lidar and Radar Signals, CVPR 2021.
 
+## Prerequisites
+
+- Python 3.7
+- Pytorch 1.5.0
+- Detectron2
+- Pycocotools
+
+MVDNet uses an old version of Detectron2 (i.e., 0.1.1) with [minor modifications](https://github.com/qiank10/detectron2/commit/370700b01be5ce401a1803af70d3e4c0471858c5). To download and install the compatible version:
+```
+git clone https://github.com/qiank10/detectron2.git
+git checkout alt-0.1.1
+cd detectron2 && pip install -e .
+```
+
+
+
 ## Prepare Data
 
-Download the [Oxford Radar RobotCar Dataset](https://oxford-robotics-institute.github.io/radar-robotcar-dataset). Currently, only the vehicles in the first data record (Data: 10/01/2019, Time: 11:46:21 GMT) are labeled. After unzipping the files, the directory should look like this:
+Download the [Oxford Radar RobotCar Dataset](https://oxford-robotics-institute.github.io/radar-robotcar-dataset). Currently, only the vehicles in the first data record (Date: 10/01/2019, Time: 11:46:21 GMT) are labeled. After unzipping the files, the directory should look like this:
 ```
 # Oxford Radar RobotCar Data Record
 |-- DATA_PATH
