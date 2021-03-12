@@ -114,7 +114,7 @@ def radar_polar_to_cartesian(azimuths: np.ndarray, fft_data: np.ndarray, radar_r
     # Compensate radar self motion
     Y, X = np.meshgrid(coords, -coords)
     angle_resolution = 360.0 / len(fine_timestamp)
-    sample_angle = (np.arctan2(Y-y0, X-x0) - yaw0) % (2 * np.pi) / np.pi * 180
+    sample_angle = ((np.arctan2(Y-y0, X-x0) - yaw0) % (2 * np.pi)) / np.pi * 180
     sample_time = np.floor(sample_angle / angle_resolution).astype(int)
     sample_time[sample_time >= len(fine_timestamp)] = len(fine_timestamp) - 1
     sample_x1 = fine_timestamp[sample_time] * x1
