@@ -63,13 +63,13 @@ def main(args):
         lidar_data_all = []
         for right_lidar_timestamp_j in range(right_lidar_timestamp_i-1, right_lidar_timestamp_i+lidar_radar_frame_ratio+1):
             right_lidar_filename = os.path.join(args.data_path, 'velodyne_right', str(int(right_lidar_timestamp[right_lidar_timestamp_j])) + '.bin')
-            right_lidar_data = np.fromfile(right_lidar_filename, dtype='<f4')
-            right_lidar_data = np.matrix(np.reshape(right_lidar_data, (4, int(len(right_lidar_data)/4))))
+            right_lidar_data = np.fromfile(right_lidar_filename, dtype=np.float32)
+            right_lidar_data = np.matrix(np.reshape(right_lidar_data, (4, -1)))
             
             left_lidar_timestamp_closest = left_lidar_timestamp[min(range(len(left_lidar_timestamp)), key=lambda ii: abs(left_lidar_timestamp[ii] - right_lidar_timestamp[right_lidar_timestamp_j]))]
             left_lidar_filename = os.path.join(args.data_path, 'velodyne_left', str(int(left_lidar_timestamp_closest)) + '.bin')
-            left_lidar_data = np.fromfile(left_lidar_filename, dtype='<f4')
-            left_lidar_data = np.matrix(np.reshape(left_lidar_data, (4, int(len(left_lidar_data)/4))))
+            left_lidar_data = np.fromfile(left_lidar_filename, dtype=np.float32)
+            left_lidar_data = np.matrix(np.reshape(left_lidar_data, (4, -1)))
 
             frame_rot, frame_pos = frame_transform(left_lidar_timestamp_closest, right_lidar_timestamp[right_lidar_timestamp_j], lidar_odometry)
             frame_rot, frame_pos = compose_transform(LEFT_LIDAR_ROT, LEFT_LIDAR_POS, frame_rot, frame_pos)
@@ -77,6 +77,9 @@ def main(args):
             left_lidar_data[0:3,:] = np.matrix(frame_rot.as_dcm()) * left_lidar_data[0:3,:] + np.tile(np.matrix(frame_pos).T, (1, left_lidar_data.shape[1]))
 
             lidar_data = np.concatenate((right_lidar_data, left_lidar_data), axis=1)
+            lidar_self = np.logical_and(np.logical_and(lidar_data[0,:] > -2.1, lidar_data[0,:] < 2), np.logical_and(lidar_data[1,:] > -0.5, lidar_data[1,:] < 1.4))
+            lidar_sel = np.where(np.logical_not(lidar_self))[1]
+            lidar_data = lidar_data[:,lidar_sel]
             lidar_location = lidar_data[0:3,:]
             lidar_intensity = lidar_data[3:,:]
             
