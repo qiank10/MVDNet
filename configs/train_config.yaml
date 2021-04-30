@@ -17,7 +17,6 @@ INPUT:
       HEIGHT_UB: 2.5
       DELTA_H: 0.1
 MODEL:
-  WEIGHTS: "./output/mvdnet/model_final.pth"
   META_ARCHITECTURE: "MVDNet"
   BACKBONE:
     NAME: build_mvdnet_backbone
