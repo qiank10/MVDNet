@@ -15,7 +15,11 @@ git checkout alt-0.1.1
 cd detectron2 && pip install -e .
 ```
 
-
+Install MVDNet
+```
+git clone https://github.com/qiank10/MVDNet.git
+cd MVDNet && pip install -e .
+```
 
 ## Prepare Data
 
@@ -79,4 +83,14 @@ The processed data is organized as follows:
 Both 2D and 3D labels are in
 ```
 ./data/RobotCar/object/
+```
+
+## Train MVDNet
+```
+python ./tools/train.py --config ./configs/train_config.yaml
+```
+
+## Evaluate MVDNet
+```
+python ./tools/eval.py --config ./configs/eval_config.yaml
 ```
