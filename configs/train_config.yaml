@@ -1,0 +1,69 @@
+INPUT:
+  EVAL_BETA: 0.0
+  HISTORY_ON: True
+  NUM_HISTORY: 4
+  LIDAR:
+    FOG:
+      G: 0.45
+      N: 0.02
+      D_MIN: 2
+      FRACTION_RANDOM: 0.05
+      FOG_RATIO: 0.5
+      BETA_RANGE: [0.005, 0.08]
+    PROJECTION:
+      DELTA_L: 0.2
+      PIXEL_L: 320
+      HEIGHT_LB: -1.0
+      HEIGHT_UB: 2.5
+      DELTA_H: 0.1
+MODEL:
+  WEIGHTS: "./output/mvdnet/model_final.pth"
+  META_ARCHITECTURE: "MVDNet"
+  BACKBONE:
+    NAME: build_mvdnet_backbone
+  MVDNET:
+    STEM_OUT_CHANNELS: 32
+    STAGE_LAYERS: [3,3]
+    RADAR_STAGE_OUT_CHANNELS: [32,64]
+    LIDAR_STAGE_OUT_CHANNELS: [64,128]
+    RADAR_NORM: "BN"
+    LIDAR_NORM: "BN"
+  ANCHOR_GENERATOR:
+    NAME: RotatedAnchorGenerator
+    ANGLES: [[-90, -45, 0, 45]]
+    SIZES: [[26]] # Pixels
+    ASPECT_RATIOS: [[2]]
+  PROPOSAL_GENERATOR:
+    NAME: MVDNetRRPN
+    MIN_SIZE: 2
+  RPN:
+    BBOX_REG_WEIGHTS: (1,1,1,1,1)
+    IN_FEATURES: ["radar_rpn", "lidar_rpn"]
+    PRE_NMS_TOPK_TRAIN: 6000
+    PRE_NMS_TOPK_TEST: 3000
+    POST_NMS_TOPK_TRAIN: 1000
+    POST_NMS_TOPK_TEST: 500
+    IOU_THRESHOLDS: [0.45, 0.55]
+  ROI_HEADS:
+    NAME: MVDNetROIHeads
+    IN_FEATURES: ["radar_rcnn", "lidar_rcnn"]
+    BATCH_SIZE_PER_IMAGE: 256
+    NUM_CLASSES: 1
+    NMS_THRESH_TEST: 0.2
+    SCORE_THRESH_TEST: 0.1
+  ROI_BOX_HEAD:
+    NAME: MVDNetBoxHead
+    POOLER_TYPE: ROIAlignRotated
+    BBOX_REG_WEIGHTS: (10,10,5,5,1)
+    NUM_FC: 2
+    POOLER_RESOLUTION: 7
+DATASETS:
+  TRAIN: ("robotcar_train",)
+  TEST: ("robotcar_eval",)
+SOLVER:
+  IMS_PER_BATCH: 1
+  BASE_LR: 0.01
+  MAX_ITER: 120000
+  STEPS: (40000,80000)
+  CHECKPOINT_PERIOD: 10000
+OUTPUT_DIR: ./output/mvdnet/

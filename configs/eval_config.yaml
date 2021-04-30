@@ -1,0 +1,9 @@
+_BASE_: "./train_config.yaml"
+INPUT:
+  EVAL_BETA: 0.0
+  HISTORY_ON: True
+  NUM_HISTORY: 4
+DATASETS:
+  TEST: ("robotcar_eval",)
+MODEL:
+  WEIGHTS: "./output/mvdnet/model_final.pth"
